@@ -6,7 +6,7 @@ main = do print $ "Leg1: " ++ show (leg1 5 4)
           print $ "Double: " ++ show (double 5)
           print $ "Square: " ++ show (square 7)
           print $ "Is triple: " ++ show (isTriple 4 5 6)
-       
+
 -- Exercise 3:
 
 double :: Int -> Int
@@ -19,7 +19,6 @@ square x = x * x
 
 isTriple :: Int -> Int -> Int -> Bool
 isTriple a b c = square a + square b == square c
-
 
 -- Exercise 5:
 
@@ -37,4 +36,3 @@ hyp x y = square x + square y
 
 prop_triple :: Int -> Int -> Bool
 prop_triple x y = isTriple (leg1 x y) (leg2 x y) (hyp x y)
-
