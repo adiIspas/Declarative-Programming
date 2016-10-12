@@ -3,15 +3,15 @@
 -- 	Haskell: The Craft of Functional Programming, 3e
 -- 	Simon Thompson
 -- 	(c) Addison-Wesley, 1996-2011.
--- 
+--
 -- 	PicturesSVG
 --
---      The Pictures functionality implemented by translation  
+--      The Pictures functionality implemented by translation
 --      SVG (Scalable Vector Graphics)
 --
 --      These Pictures could be rendered by conversion to ASCII art,
---      but instead are rendered into SVG, which can then be viewed in 
---      a browser: google chrome does a good job. 
+--      but instead are rendered into SVG, which can then be viewed in
+--      a browser: google chrome does a good job.
 --
 -----------------------------------------------------------------------
 
@@ -25,8 +25,8 @@ import Control.Monad (liftM, liftM2)
 -- Pictures represened by a type of trees, so this is a deep
 -- embedding.
 
-data Picture 
- = Img Image 
+data Picture
+ = Img Image
  | Above Picture Picture
  | Beside Picture Picture
  | Over Picture Picture
@@ -58,25 +58,25 @@ data Name  = Name String
 -- The functions over Pictures
 --
 
-above, beside, over :: Picture -> Picture -> Picture 
+above, beside, over :: Picture -> Picture -> Picture
 
 above  = Above
 beside = Beside
 over   = Over
- 
+
 -- flipH is flip in a horizontal axis
 -- flipV is flip in a vertical axis
 -- negative negates each pixel
 
--- The definitions of flipH, flipV, negative push the 
--- constructors through the binary operations to the images 
+-- The definitions of flipH, flipV, negative push the
+-- constructors through the binary operations to the images
 -- at the leaves.
 
--- Original implementation incorrect: it pushed the 
--- flipH and flipV through all constructors ... 
+-- Original implementation incorrect: it pushed the
+-- flipH and flipV through all constructors ...
 -- Now it distributes appropriately over Above, Beside and Over.
 
-flipH, flipV, invert :: Picture -> Picture 
+flipH, flipV, invert :: Picture -> Picture
 
 flipH (Above pic1 pic2)  = (flipH pic2) `Above` (flipH pic1)
 flipH (Beside pic1 pic2) = (flipH pic1) `Beside` (flipH pic2)
@@ -94,7 +94,7 @@ invertColour = Invert
 
 -- Convert an Image to a Picture
 
-img :: Image -> Picture 
+img :: Image -> Picture
 
 img = Img
 
@@ -106,7 +106,7 @@ img = Img
 
 width,height :: Picture -> Int
 
-width (Img (Image _ (x,_))) = x 
+width (Img (Image _ (x,_))) = x
 width (Above pic1 pic2)     = max (width pic1) (width pic2)
 width (Beside pic1 pic2)    = (width pic1) + (width pic2)
 width (Over pic1 pic2)      = max (width pic1) (width pic2)
@@ -114,7 +114,7 @@ width (FlipH pic)           = width pic
 width (FlipV pic)           = width pic
 width (Invert pic)          = width pic
 
-height (Img (Image _ (x,y))) = y 
+height (Img (Image _ (x,y))) = y
 height (Above pic1 pic2)     = (height pic1) + (height pic2)
 height (Beside pic1 pic2)    = max (height pic1) (height pic2)
 height (Over pic1 pic2)      = max (height pic1) (height pic2)
@@ -126,7 +126,7 @@ height (Invert pic)          = height pic
 -- Converting pictures to a list of basic images.
 --
 
--- A Filter represents which of the actions of flipH, flipV 
+-- A Filter represents which of the actions of flipH, flipV
 -- and invert is to be applied to an image in forming a
 -- Basic picture.
 
@@ -144,7 +144,7 @@ data Basic = Basic Image Point Filter
 
 flatten :: Point -> Picture -> [Basic]
 
-flatten (x,y) (Img image)        = [Basic image (x,y) newFilter] 
+flatten (x,y) (Img image)        = [Basic image (x,y) newFilter]
 flatten (x,y) (Above pic1 pic2)  = flatten (x,y) pic1 ++ flatten (x, y + height pic1) pic2
 flatten (x,y) (Beside pic1 pic2) = flatten (x,y) pic1 ++ flatten (x + width pic1 , y) pic2
 flatten (x,y) (Over pic1 pic2)   = flatten (x,y) pic2 ++ flatten (x,y) pic1
@@ -168,18 +168,18 @@ convert (Basic (Image (Name name) (width, height)) (x,y) (Filter fH fV neg))
   = "\n  <image x=\"" ++ show x ++ "\" y=\"" ++ show y ++ "\" width=\"" ++ show width ++ "\" height=\"" ++
     show height ++ "\" xlink:href=\"" ++ name ++ "\"" ++ flipPart ++ negPart ++ "/>\n"
         where
-          flipPart 
-              = if      fH && not fV 
-                then " transform=\"translate(0," ++ show (2*y + height) ++ ") scale(1,-1)\" " 
-                else if fV && not fH 
-                then " transform=\"translate(" ++ show (2*x + width) ++ ",0) scale(-1,1)\" " 
-                else if fV && fH 
-                then " transform=\"translate(" ++ show (2*x + width) ++ "," ++ show (2*y + height) ++ ") scale(-1,-1)\" " 
+          flipPart
+              = if      fH && not fV
+                then " transform=\"translate(0," ++ show (2*y + height) ++ ") scale(1,-1)\" "
+                else if fV && not fH
+                then " transform=\"translate(" ++ show (2*x + width) ++ ",0) scale(-1,1)\" "
+                else if fV && fH
+                then " transform=\"translate(" ++ show (2*x + width) ++ "," ++ show (2*y + height) ++ ") scale(-1,-1)\" "
                 else ""
-          negPart 
-              = if neg 
-                then " filter=\"url(#negative)\"" 
-                else "" 
+          negPart
+              = if neg
+                then " filter=\"url(#negative)\""
+                else ""
 
 -- Outputting a picture.
 -- The effect of this is to write the SVG code into a file
@@ -189,8 +189,8 @@ convert (Basic (Image (Name name) (width, height)) (x,y) (Filter fH fV neg))
 
 render :: Picture -> IO ()
 
-render pic 
- = 
+render pic
+ =
    let
        picList = flatten (0,0) pic
        svgString = concat (map convert picList)
@@ -201,7 +201,7 @@ render pic
        hPutStrLn outh newFile
        hClose outh
 
--- Preamble and postamble: boilerplate XML code. 
+-- Preamble and postamble: boilerplate XML code.
 
 preamble
  = "<svg width=\"100%\" height=\"100%\" version=\"1.1\"\n" ++
@@ -232,6 +232,6 @@ horse = Img $ Image (Name "images/blk_horse_head.jpg") (150, 200)
 
 repeatH n img | n > 0     = foldl1 beside (replicate n img)
               | otherwise = error "The first argument to repeatH should be greater than 1"
-                            
+
 repeatV n img | n > 0     = foldl1 above (replicate n img)
-              | otherwise = error "The first argument to repeatV should be greater than 1"                            
+              | otherwise = error "The first argument to repeatV should be greater than 1"

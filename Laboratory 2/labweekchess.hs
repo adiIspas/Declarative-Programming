@@ -84,9 +84,15 @@ emptyBoard = above middleBoard middleBoard
 mate :: Picture
 mate = over (above clear (above (beside (repeatH 6 clear) (beside (invert queen) king)) (beside (repeatH 5 clear) (invert king)))) middleBoard
 
-black_Pawns_7 :: Picture
-black_Pawns_7 = undefined
+blackBoardWithout :: Picture
+blackBoardWithout = over (above blackRow (beside (repeatH 2 (invert pawn)) (beside blackSquare (repeatH 5 (invert pawn))))) (above emptyRow otherEmptyRow)
+
+whiteBoardWithout :: Picture
+whiteBoardWithout = over (above (beside (repeatH 4 pawn) (beside whiteSquare (repeatH 3 pawn))) (beside rook (beside knight (beside bishop (beside queen (beside king (beside bishop (beside blackSquare rook)))))))) (above emptyRow otherEmptyRow)
+
+middleBoardWith :: Picture
+middleBoardWith = over (above emptyRow (above (beside blackSquare (beside whiteSquare (invert pawn))) (above (beside (repeatH 2 (beside whiteSquare blackSquare)) pawn) (beside (repeatH 2 (beside blackSquare whiteSquare)) (beside blackSquare knight)) ))) (repeatV 2 (above emptyRow otherEmptyRow))
 
 e4c5Nf3 :: Picture
-e4c5Nf3 = undefined
+e4c5Nf3 = above blackBoardWithout (above middleBoardWith whiteBoardWithout)
 --- "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R"
