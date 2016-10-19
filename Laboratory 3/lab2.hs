@@ -65,11 +65,11 @@ prop_countPositives xs = countPositives xs == countPositivesRec xs
 
 -- Helper function
 discount :: Int -> Int
-discount = undefined
+discount x = round(0.9 * fromIntegral x)
 
 -- List-comprehension version
 pennypincher :: [Int] -> Int
-objects_buy xs = [x  | x <- xs, x <= 19900]
+objects_buy xs = [discount x  | x <- xs, discount x <= 19900]
 pennypincher xs = sum (objects_buy xs)
 
 -- Recursive version
@@ -77,7 +77,7 @@ pennypincherRec :: [Int] -> Int
 pennypincherRec [] = 0
 pennypincherRec [x] | x <= 19900 = x
                     | otherwise = 0
-pennypincherRec (x:xs) | x <= 19900 = pennypincherRec xs + x
+pennypincherRec (x:xs) | discount x <= 19900 = pennypincherRec xs + discount x
                        | otherwise = pennypincherRec xs
 
 -- Mutual test
@@ -88,44 +88,59 @@ prop_pennypincher xs = pennypincher xs == pennypincherRec xs
 
 -- List-comprehension version
 multDigits :: String -> Int
-multDigits = undefined
+multDigits xs = product [digitToInt x | x <- xs, isDigit(x)]
 
 -- Recursive version
 multDigitsRec :: String -> Int
-multDigitsRec = undefined
+multDigitsRec [] = 1
+multDigitsRec (x:xs) | isDigit(x) = multDigitsRec xs * digitToInt x
+                     | otherwise = multDigitsRec xs
 
 -- Mutual test
 prop_multDigits :: String -> Bool
-prop_multDigits = undefined
-
-
+prop_multDigits xs = multDigits xs == multDigitsRec xs
 
 -- 6. capitalise
 
 -- List-comprehension version
+lower :: String -> String
+lower xs = [toLower x | x <- xs]
+
+lowerRec :: String -> String
+lowerRec [] = []
+lowerRec (x:xs) = toLower x : lowerRec xs
+
 capitalise :: String -> String
-capitalise = undefined
+capitalise [] = ""
+capitalise (x:xs) = toUpper x : lower xs
 
 -- Recursive version
 capitaliseRec :: String -> String
-capitaliseRec = undefined
+capitaliseRec [] = []
+capitaliseRec (x:xs) = toUpper x : lowerRec xs
 
 -- Mutual test
 prop_capitalise :: String -> Bool
-prop_capitalise = undefined
-
-
+prop_capitalise xs = capitaliseRec xs == capitalise xs
 
 -- 7. title
 
 -- List-comprehension version
+
 title :: [String] -> [String]
-title = undefined
+title [] = []
+title (x:xs) = capitalise x : [if length x >= 4 then capitalise x else lower x | x <- xs]
 
 -- Recursive version
 titleRec :: [String] -> [String]
-titleRec = undefined
+titleRec [] = []
+titleRec (x:xs) = capitalise x : titleRec2 xs
+
+titleRec2 :: [String] -> [String]
+titleRec2 [] = []
+titleRec2 (x:xs) | length x >= 4 = capitalise x : titleRec2 xs
+                 | otherwise = lower x : titleRec2 xs
 
 -- mutual test
 prop_title :: [String] -> Bool
-prop_title = undefined
+prop_title xs = titleRec xs == title xs
