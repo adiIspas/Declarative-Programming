@@ -6,8 +6,6 @@
 import Data.Char
 import Test.QuickCheck
 
-
-
 -- 1. Map
 -- a. (4 simboluri)
 uppers :: String -> String
@@ -93,7 +91,6 @@ prop_reverseEven :: [String] -> Bool
 prop_reverseEven strs = reverseEven strs == reverseEven' strs
 
 
-
 -- 4. Foldr
 -- a.
 productRec :: [Int] -> Int
@@ -115,7 +112,7 @@ andRec (x:xs) | x == True = True && andRec xs
 
 -- (7 simboluri)
 andFold :: [Bool] -> Bool
-andFold = undefined
+andFold xs = foldr (&&) True xs
 
 prop_and :: [Bool] -> Bool
 prop_and xs = andRec xs == andFold xs
@@ -126,7 +123,7 @@ concatRec = undefined
 
 -- (8 simboluri)
 concatFold :: [[a]] -> [a]
-concatFold = undefined
+concatFold xs = foldr (++) [] xs
 
 prop_concat :: [String] -> Bool
 prop_concat strs = concatRec strs == concatFold strs
@@ -134,10 +131,11 @@ prop_concat strs = concatRec strs == concatFold strs
 -- d.  (17 simboluri)
 rmCharsRec :: String -> String -> String
 rmCharsRec = undefined
+--rmCharsRec chs xs = rmChar (head chs) xs : rmCharsRec (tail chs) xs
 
 -- (6 simboluri)
 rmCharsFold :: String -> String -> String
-rmCharsFold = undefined
+rmCharsFold chs xs = undefined
 
 prop_rmChars :: String -> String -> Bool
 prop_rmChars chars str = rmCharsRec chars str == rmCharsFold chars str
@@ -150,17 +148,36 @@ type Matrix = [[Int]]
 -- 5
 -- a. (10 simboluri)
 uniform :: [Int] -> Bool
-uniform = undefined
+uniform xs = all (== head xs) xs
 
 -- b. (	 simboluri)
 valid :: Matrix -> Bool
-valid = undefined
+valid (x:xs) = all (== length x) (lengthM xs)
+
+lengthM :: Matrix -> [Int]
+lengthM [] = []
+lengthM (x:xs) = length x : lengthM xs
 
 -- 6.
 
 -- 7.  (22 simboluri + 19 simboluri)  cu tot cu tratarea erorilor
+matrixWidth :: Matrix -> Int
+matrixWidth m = length (head m)
+
+matrixHeight :: Matrix -> Int
+matrixHeight m = length m
+
 plusM :: Matrix -> Matrix -> Matrix
-plusM = undefined
+plusM m n | ok        = zipWith (zipWith (+)) m n
+          | otherwise = error "Invalid input matrices"
+  where ok = matrixWidth m == matrixWidth n
+             && matrixHeight m == matrixHeight n
+             && valid m && valid n
+
+transpose               :: [[a]] -> [[a]]
+transpose []             = []
+transpose ([]   : xss)   = transpose xss
+transpose ((x:xs) : xss) = (x : [h | (h:_) <- xss]) : transpose (xs : [ t | (_:t) <- xss])
 
 -- 8. (23 simboluri + 15 simboluri)  cu tot cu tratarea erorilor
 timesM :: Matrix -> Matrix -> Matrix
