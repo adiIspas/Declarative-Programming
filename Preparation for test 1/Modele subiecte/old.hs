@@ -49,3 +49,11 @@ elimina_dubluri (x:xs) = if contain x xs then elimina_dubluri xs else x:elimina_
 
 -- 4. Pentru un numar intreg x sa se determine lista de factori primi
 --factor 315 = [3, 3, 5, 7]
+
+primeFactors :: Int -> [Int]
+primeFactors 1 = []  -- 1 has no factors but it is not prime
+primeFactors n
+  | factors == []   = [n]  -- no factors, the number is prime: primeFactors 11 = [11]
+  | otherwise       = smFact : primeFactors (n `div` smFact)  -- keep the factor continue after we divided by it
+    where smFact  = head factors  -- smallest factor (if n is divisible by 4 then it is surely divisible by 2)
+          factors = factors = tail (divisors n) -- divisors except 1, or: facotrs = filter (\d -> (n `mod` d) == 0) [2..n-1]

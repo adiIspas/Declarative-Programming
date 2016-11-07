@@ -94,6 +94,7 @@ fill :: String -> String
 fill str = str ++ replicate (5 - length str) 'X'
 
 
+
 -- 13.
 prop_transpose :: String -> Bool
 prop_transpose = undefined
