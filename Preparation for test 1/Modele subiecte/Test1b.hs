@@ -27,7 +27,12 @@ prim n = [] /= [True | x <- prime, x == n]
 -- 	exemplu:
 -- 	numToString 452 == "452"
 numToString :: Int -> String
-numToString = undefined
+numToString 0 = ""
+numToString n = div n (lungime n) : numToString (mod n 10)
+
+lungime :: Int -> Int
+lungime 0 = 0
+lungime n = 1 + lungime (div n 10)
 
 
 -- 3.a)  (2p) Folositi doar list comprehension, si functiile definite anterior + functiile din categoria A, B
