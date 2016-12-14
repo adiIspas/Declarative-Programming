@@ -93,3 +93,13 @@ envs [] = [[]]
 envs (x:xs) = [(x,False):e | e <- envs xs] ++ [(x,True):e | e <- envs xs]
 
 -- Satisfiabilitate
+satisfiable p = or [ eval e p | e <- envs (names p) ]
+
+-- Partialitate
+power :: Maybe Int -> Int -> Int
+power Nothing n = 2 ^ n
+power (Just n) m = n ^ m
+
+divide :: Int -> Int -> Maybe Int
+divide n 0 = Nothing
+divide n m = Just (div n m)
