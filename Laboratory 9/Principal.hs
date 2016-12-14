@@ -13,6 +13,6 @@ main = do
 
   return numere_int
 
-  --let arbore = ini numere_int
+  let arbore = ini numere_int
 
-  --return (parcurgere arbore)
+  return (parcurgere arbore)
