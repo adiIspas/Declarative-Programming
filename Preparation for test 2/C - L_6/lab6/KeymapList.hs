@@ -15,7 +15,7 @@ where
 newtype Keymap k a = K [(k,a)]
 
 
-size :: Eq k => Keymap k a -> Int
+size :: Keymap k a -> Int
 size (K xs) = length xs
 
 get :: Eq k => k -> Keymap k a -> Maybe a
